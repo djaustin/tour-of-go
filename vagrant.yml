@@ -1,0 +1,19 @@
+- name: Provision Go Ubuntu workstation
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Download installation media
+      become: yes
+      unarchive:
+        src: https://dl.google.com/go/go1.14.linux-amd64.tar.gz
+        remote_src: yes
+        dest: /usr/local
+        creates: /usr/local/go
+    
+    - name: Add Go bins to PATH
+      become: yes
+      lineinfile:
+          path: /etc/profile # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
+          state: present # not required. choices: absent;present. Whether the line should be there or not.
+          line: PATH=$PATH:/usr/local/go/bin # not required. Required for C(state=present). The line to insert/replace into the file. If C(backrefs) is set, may contain backreferences that will get expanded with the C(regexp) capture groups if the regexp matches.
+
